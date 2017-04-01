@@ -1,5 +1,10 @@
 # chiepherd_api
 
+### Infos pratique
+Pour taper l'api, utiliser 192.168.56.103:3000
+
+---
+### Description
 Cette API est le bloc principal de la solution logicielle. Elle permet en effet la gestion des tâches, des projets, et celle des utilisateurs.
 
 De nouveaux utilisateurs peuvent rejoindre le système, éditer leur profile, ou même supprimer leur compte.
