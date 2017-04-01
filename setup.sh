@@ -4,10 +4,12 @@ function InstallEnv {
 }
 
 function InstallNode {
-  apt-get install nodejs npm -y
+  curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
+  apt-get install nodejs -y
+  apt-get install npm -y
   npm install express
   npm install -g express-generator
-  sudo ln -s /usr/bin/nodejs /usr/local/bin/node
+  ln -s /usr/bin/nodejs /usr/local/bin/node
 }
 
 echo 'Prepare the environement'; InstallEnv
