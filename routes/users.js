@@ -10,9 +10,11 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-  let lastname = req.body.last_name
+  let email = req.body.email
+  let password = req.body.password
   User.create({
-    lastname: lastname,
+    email: email,
+    password: password
   }).then(function(p) {
     res.json(p)
   }).catch(next)
