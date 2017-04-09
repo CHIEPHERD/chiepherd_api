@@ -14,7 +14,7 @@ function InstallNodeAndNpm {
 }
 
 function InstallPostgre {
-  apt-get install postgresql -y
+  apt-get install postgresql postgresql-client-common -y
   npm install -g sequelize-cli
   #connection postgres pour créer vagrant
   sudo -u postgres psql -c "CREATE USER vagrant WITH PASSWORD 'root'"
