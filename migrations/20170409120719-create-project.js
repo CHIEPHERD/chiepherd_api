@@ -8,14 +8,11 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      id: {
-        type: Sequelize.NUMBER
-      },
       name: {
         type: Sequelize.STRING
       },
       label: {
-        type: Sequelize.TINYTEXT
+        type: Sequelize.TEXT
       },
       description: {
         type: Sequelize.TEXT
@@ -28,15 +25,9 @@ module.exports = {
       },
       visibility: {
         type: Sequelize.BOOLEAN
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
       }
+    },{
+      timestamps: false
     });
   },
   down: function(queryInterface, Sequelize) {
