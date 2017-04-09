@@ -1,26 +1,62 @@
 "use strict";
-
 var express = require('express');
+var bodyParser = require('body-parser');
+var sequelize = require("sequelize");
+
 var routerProject = express.Router();
 var routerTask = express.Router();
 
-//var models = require("../models");
+routerProject.use(bodyParser.json());
+
+var models = require("../models");
+var project = models.project;
+var users = models.users;
 
 routerProject.get('/', function(req, res, next) {
-  // retourne tous les projets
-  let allProject = projects.findAll()
-    .then(console.log(allProject));
-  res.status = 200;
-
+  // retourne tous les projet
+  project.findAll({
+    attributes:{
+      exclude:["createdAt","updatedAt"]
+    }
+  }).then(function(result){
+      console.log(result);
+      res.type("raw");
+      res.send(result);
+      res.status = 200;
+    });
 });
 
 //création et modification d'un projet
 //l'id du créateur du projet vient de RmQ
 routerProject.get("/:id",function(req, res, next) {
-  //envoyer le projet
+
   let id = req.params.id;
-  console.log("get Project " + id);
-  
+  users.findOne({
+    where:{
+      id: id
+    },
+    attributes:{
+      exclude:["createdAt","updatedAt"]
+    }
+  }).then(function(user){
+    if(user != null)
+    {
+      project.findAll({
+        where:{
+          id: user.id
+        },
+        attributes:{
+          exclude:["createdAt","updatedAt"]
+        }
+      }).then(function(resultat){
+        console.log(resultat);
+      })
+    }
+
+    console.log("Cette utilisateur n'existe pas");
+  })
+
+
   res.end();
 });
 routerProject.put("/:id",function(req, res, next) {

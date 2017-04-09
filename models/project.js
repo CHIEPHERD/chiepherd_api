@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
     visibility: DataTypes.BOOLEAN
   }, {
     classMethods: {
-      timestamps: false,
+
       associate: function(models) {
         // associations can be defined here
       }
