@@ -22,9 +22,13 @@ const User = models.users
 // (`username` and `password`) submitted by the user.  The function must verify
 // that the password is correct and then invoke `cb` with a user object, which
 // will be set at `req.user` in route handlers after authentication.
-passport.use(new Strategy(
-  function(email, password, cb) {
-    User.findOne({ email: email }).then(function(user) {
+passport.use(new Strategy({
+    usernameField: 'email',
+    passwordField: 'password',
+    passReqToCallback: true,
+    session: false
+  }, function(req, email, password, cb) {
+    User.findOne({ where: { email: email }}).then(function(user) {
       if (!user) {
         return cb(null, false);
       } else if (user.password != password) {
