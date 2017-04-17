@@ -29,8 +29,8 @@ routerProject.get('/', function(req, res, next) {
 //création et modification d'un projet
 //l'id du créateur du projet vient de RmQ
 routerProject.get("/:id",function(req, res, next) {
-
   let id = req.params.id;
+
   users.findOne({
     where:{
       id: id
@@ -39,6 +39,33 @@ routerProject.get("/:id",function(req, res, next) {
       exclude:["createdAt","updatedAt"]
     }
   }).then(function(user){
+    if(user != null)
+    {
+    }
+    console.log("user doesn't exsit");
+
+  });
+
+
+  res.end();
+});
+routerProject.put("/:id",function(req, res, next) {
+  //modifier le projet
+  let id = req.params.id;
+
+  console.log("put Project");
+  let projectName = req.body.name;
+  let projectlabel = req.body.label;
+
+  users.findOne({
+    where:{
+      id: id
+    },
+    attributes:{
+      exclude:["createdAt","updatedAt"]
+    }
+  })
+  .then(function(user){ //Pas intermédiaire pour tester
     if(user != null)
     {
       console.log(user);
@@ -54,21 +81,24 @@ routerProject.get("/:id",function(req, res, next) {
       console.log("utilisateur de test créée");
     }
     return user;
-  }).then(function(user){
+  })
+  .then(function(user){
+    console.log("UserOk");
+
     project.create({
-      name: "testProject",
-      label: "testLabel"
+      name: projectName,
+      label: projectlabel
     }).then(function(project){
-      user.addProject([project]);
+      console.log("Project created");
+
+      user.addProject([project])
+        .then(function()
+        {
+          console.log("allGood");
+        });
     });
+    res.status("200");
   });
-
-
-  res.end();
-});
-routerProject.put("/:id",function(req, res, next) {
-  //modifier le projet
-  console.log("put Project");
   res.end();
 
 });
