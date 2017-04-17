@@ -7,6 +7,7 @@ function InstallNodeAndNpm {
   curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
   apt-get install nodejs -y
   apt-get install npm -y
+  ln -s /home/vagrant/node_modules/ /vagrant/node_modules
   npm install /vagrant
   npm install -g node-dev
   npm install -g express-generator
