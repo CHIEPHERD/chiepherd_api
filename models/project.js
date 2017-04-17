@@ -1,6 +1,12 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
   var project = sequelize.define('project', {
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.BIGINT
+    },
     name: DataTypes.STRING,
     label: DataTypes.TEXT,
     description: DataTypes.TEXT,
@@ -11,7 +17,9 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
 
       associate: function(models) {
-        // associations can be defined here
+          project.belongsToMany(models.users,
+            {through : "project_users_nn"}
+          );
       }
     }
   });

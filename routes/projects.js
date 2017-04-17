@@ -20,7 +20,7 @@ routerProject.get('/', function(req, res, next) {
     }
   }).then(function(result){
       console.log(result);
-      res.type("raw");
+      res.type("json");
       res.send(result);
       res.status = 200;
     });
@@ -41,20 +41,27 @@ routerProject.get("/:id",function(req, res, next) {
   }).then(function(user){
     if(user != null)
     {
-      project.findAll({
-        where:{
-          id: user.id
-        },
-        attributes:{
-          exclude:["createdAt","updatedAt"]
-        }
-      }).then(function(resultat){
-        console.log(resultat);
-      })
+      console.log(user);
     }
-
-    console.log("Cette utilisateur n'existe pas");
-  })
+    else {
+      console.log("Cette utilisateur n'existe pas");
+      users.create({
+        email: "toto@mail.com",
+        password: "test"
+      }).then(function(result){
+        console.log(result);
+      });
+      console.log("utilisateur de test créée");
+    }
+    return user;
+  }).then(function(user){
+    project.create({
+      name: "testProject",
+      label: "testLabel"
+    }).then(function(project){
+      user.addProject([project]);
+    });
+  });
 
 
   res.end();
