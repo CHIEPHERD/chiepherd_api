@@ -1,6 +1,6 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  var project = sequelize.define('project', {
+  var project = sequelize.define('projects', {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -10,16 +10,18 @@ module.exports = function(sequelize, DataTypes) {
     name: DataTypes.STRING,
     label: DataTypes.TEXT,
     description: DataTypes.TEXT,
-    created_at: DataTypes.DATE,
-    created_by: DataTypes.DATE,
-    visibility: DataTypes.BOOLEAN
+    visibility: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
   }, {
+    paranoid: true,
     classMethods: {
-
       associate: function(models) {
-          project.belongsToMany(models.users,
-            {through : "project_users_nn"}
-          );
+        project.belongsToMany(models.users, {
+          through : 'project_assignments'
+        });
+        project.hasMany(models.tasks);
       }
     }
   });

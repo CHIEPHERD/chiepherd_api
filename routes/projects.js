@@ -19,11 +19,11 @@ routerProject.get('/', function(req, res, next) {
       exclude:["createdAt","updatedAt"]
     }
   }).then(function(result){
-      console.log(result);
-      res.type("json");
-      res.send(result);
-      res.status = 200;
-    });
+    console.log(result);
+    res.type("json");
+    res.send(result);
+    res.status = 200;
+  });
 });
 
 //création et modification d'un projet
@@ -92,10 +92,10 @@ routerProject.put("/:id",function(req, res, next) {
       console.log("Project created");
 
       user.addProject([project])
-        .then(function()
-        {
-          console.log("allGood");
-        });
+      .then(function()
+      {
+        console.log("allGood");
+      });
     });
     res.status("200");
   });
