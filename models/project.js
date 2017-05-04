@@ -7,7 +7,10 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       type: DataTypes.BIGINT
     },
-    name: DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
     label: DataTypes.TEXT,
     description: DataTypes.TEXT,
     visibility: {
