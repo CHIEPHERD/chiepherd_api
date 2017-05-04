@@ -6,21 +6,31 @@ module.exports = function(connection, done) {
     console.log(err);
     var ex = 'chiepherd.main';
     ch.assertExchange(ex, 'topic');
-    ch.assertQueue('chiepherd.project.create', { exclusive: false }, function(err, q) {
-      ch.bindQueue(q.queue, ex, "chiepherd.project.create")
+    ch.assertQueue('chiepherd.project.update', { exclusive: false }, function(err, q) {
+      ch.bindQueue(q.queue, ex, "chiepherd.project.update")
 
       ch.consume(q.queue, function(msg) {
         // LOG
         console.log(" [%s]: %s", msg.fields.routingKey, msg.content.toString());
         let json = JSON.parse(msg.content.toString());
 
-        // Create project
-        Project.create({
-          name: json.name,
-          label: json.label,
-          description: json.description
+        // update project
+        Project.find({
+          where: {
+            id: json.id
+          }
         }).then(function(project) {
-          // OK
+          if(project) {
+            project.update({
+              name: json.name,
+              label: json.label,
+              description: json.description
+            }).then(function(project) {
+              // OK
+            }).catch(function() {
+              // NOK
+            });
+          }
         }).catch(function() {
           // NOK
         });
