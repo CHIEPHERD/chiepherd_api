@@ -24,7 +24,8 @@ module.exports = function(connection, done) {
             project.update({
               name: json.name,
               label: json.label,
-              description: json.description
+              description: json.description,
+              visibility: json.visibility
             }).then(function(project) {
               // OK
             }).catch(function() {
