@@ -27,7 +27,10 @@ module.exports = function(connection, done) {
               description: json.description,
               visibility: json.visibility
             }).then(function(project) {
-              // OK
+              ch.sendToQueue(msg.properties.replyTo,
+                new Buffer.from(JSON.stringify(project)),
+                { correlationId: msg.properties.correlationId });
+              ch.ack(msg);
             }).catch(function() {
               // NOK
             });
@@ -35,7 +38,7 @@ module.exports = function(connection, done) {
         }).catch(function() {
           // NOK
         });
-      }, { noAck: true });
+      }, { noAck: false });
     });
   });
   done();
