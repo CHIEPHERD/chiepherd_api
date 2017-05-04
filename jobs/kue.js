@@ -8,10 +8,10 @@ Kue.prototype.run = function () {
   let hello = this.kue.createQueue()
   amqp.connect('amqp://root:root@192.168.56.1', function(err, conn) {
     if(err) { console.log(err); return; }
-    hello.process('hello_world', function(job, done){
-      jobs.hello_world(conn, done);
+    hello.process('project.create', function(job, done) {
+      jobs.project.create(conn, done);
     });
-    hello.create("hello_world").save()
+    hello.create("project.create").save();
   })
 };
 
