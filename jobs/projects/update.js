@@ -31,12 +31,18 @@ module.exports = function(connection, done) {
                 new Buffer.from(JSON.stringify(project)),
                 { correlationId: msg.properties.correlationId });
               ch.ack(msg);
-            }).catch(function() {
-              // NOK
+            }).catch(function(error) {
+              ch.sendToQueue(msg.properties.replyTo,
+                new Buffer.from(JSON.stringify(project)),
+                { correlationId: msg.properties.correlationId });
+              ch.ack(msg);
             });
           }
-        }).catch(function() {
-          // NOK
+        }).catch(function(error) {
+          ch.sendToQueue(msg.properties.replyTo,
+            new Buffer.from(JSON.stringify(project)),
+            { correlationId: msg.properties.correlationId });
+          ch.ack(msg);
         });
       }, { noAck: false });
     });

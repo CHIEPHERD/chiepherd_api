@@ -20,11 +20,17 @@ module.exports = function(connection, done) {
           label: json.label,
           description: json.description
         }).then(function(project) {
-          // OK
-        }).catch(function() {
-          // NOK
+          ch.sendToQueue(msg.properties.replyTo,
+            new Buffer.from(JSON.stringify(project)),
+            { correlationId: msg.properties.correlationId });
+          ch.ack(msg);
+        }).catch(function(error) {
+          ch.sendToQueue(msg.properties.replyTo,
+            new Buffer.from(JSON.stringify(error)),
+            { correlationId: msg.properties.correlationId });
+          ch.ack(msg);
         });
-      }, { noAck: true });
+      }, { noAck: false });
     });
   });
   done();
