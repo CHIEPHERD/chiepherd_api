@@ -37,10 +37,17 @@ function InstallRedis {
   make install
 }
 
+function SetupJasmine {
+  npm install --save-dev jasmine
+  npm install -g jasmine
+  ./node_modules/.bin/jasmine init
+}
+
 echo 'Prepare the environement'; InstallEnv
 echo 'Installing Node...'; InstallNodeAndNpm
 echo 'Installing postgresql And sequelize-cli'; InstallPostgre
 echo 'Migrate db With Sequelize'; SequelizeMigrate
 echo 'Install Redis'; InstallRedis
+echo 'Installing Jasmine'; SetupJasmine
 
 exit 0

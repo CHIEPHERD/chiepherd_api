@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node-dev ./bin/www"
+    "start": "node-dev ./bin/www",
+    "test": "jasmine"
   },
   "dependencies": {
     "amqplib": "^0.5.1",
@@ -21,5 +22,8 @@
     "sequelize": "^3.30.4",
     "sequelize-cli": "^2.7.0",
     "serve-favicon": "~2.4.2"
+  },
+  "devDependencies": {
+    "jasmine": "^2.6.0"
   }
 }
