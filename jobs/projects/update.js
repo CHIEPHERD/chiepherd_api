@@ -30,6 +30,11 @@ module.exports = function(connection, done) {
               ch.sendToQueue(msg.properties.replyTo,
                 new Buffer.from(JSON.stringify(project)),
                 { correlationId: msg.properties.correlationId });
+              connection.createChannel(function(error, channel) {
+                var ex = 'chiepherd.project.updated';
+                channel.assertExchange(ex, 'fanout', { durable: false });
+                channel.publish(ex, '', new Buffer.from(JSON.stringify(project)));
+              });
               ch.ack(msg);
             }).catch(function(error) {
               ch.sendToQueue(msg.properties.replyTo,
