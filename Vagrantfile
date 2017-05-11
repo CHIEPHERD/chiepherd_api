@@ -1,5 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+# config.ssh.private_key_path = "C:/Users/'Yohan FAIRFORT'/.vagrant.d/insecure_private_key"
+
 
 Vagrant.configure(2) do |config|
   config.vm.box = 'ubuntu/trusty64'
@@ -9,6 +11,10 @@ Vagrant.configure(2) do |config|
 
   config.vbguest.auto_update = false if defined?(VagrantVbguest::Middleware)
   config.ssh.forward_agent = true
+
+  if ENV['OS'] == "Windows_NT"
+    config.ssh.private_key_path = ["C:/Users/'#{ENV['username']}'/.vagrant.d/insecure_private_key"]
+    end
   config.vm.network 'private_network', ip: '192.168.56.103'
 
   config.vm.provider :virtualbox do |vb|
