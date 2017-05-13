@@ -1,5 +1,5 @@
 'use strict'
-//sequelize model:create --name Users --attributes first_name:string,last_name:string
+var amqp = require('amqplib/callback_api');
 
 module.exports = function(sequelize, DataTypes) {
   var Users = sequelize.define('users', {
@@ -53,6 +53,20 @@ module.exports = function(sequelize, DataTypes) {
         });
         Users.belongsToMany(models.tasks, {
           through : 'users_tasks'
+        });
+      }
+    },
+    hooks: {
+      afterCreate: function(user) {
+        amqp.connect('amqp://root:root@192.168.56.1', function(err, conn) {
+          conn.createChannel(function(err, ch) {
+            var ex = 'chiepherd.user.created';
+            var key = Math.random().toString() + Math.random().toString();
+
+            ch.assertExchange(ex, 'fanout', { durable: false });
+            ch.publish(ex, key, new Buffer.from(JSON.stringify(user)));
+            console.log(' [%s]: %s', ex, JSON.stringify(user));
+          });
         });
       }
     }
