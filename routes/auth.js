@@ -22,7 +22,9 @@ router.post('/register', function(req, res) {
   if (req.body.password == req.body.password_confirmation) {
     User.create({
       email: req.body.email,
-      password: req.body.password
+      password: req.body.password,
+      firstname: req.body.firstname,
+      lastname: req.body.lastname
     }).then(function() {
       passport.authenticate('local') (req, res, function () {
         res.redirect('/');
