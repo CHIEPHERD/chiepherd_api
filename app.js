@@ -28,22 +28,22 @@ models.sequelize.sync({
 // that the password is correct and then invoke `cb` with a user object, which
 // will be set at `req.user` in route handlers after authentication.
 passport.use(new Strategy({
-    usernameField: 'email',
-    passwordField: 'password',
-    passReqToCallback: true,
-    session: false
-  }, function(req, email, password, cb) {
-    User.findOne({ where: { email: email }}).then(function(user) {
-      if (!user) {
-        return cb(null, false);
-      } else if (user.password != password) {
-        return cb(null, false);
-      }
-      return cb(null, user);
-    }).catch(function(err) {
-      return err;
-    });
-  }));
+  usernameField: 'email',
+  passwordField: 'password',
+  passReqToCallback: true,
+  session: false
+}, function(req, email, password, cb) {
+  User.findOne({ where: { email: email }}).then(function(user) {
+    if (!user) {
+      return cb(null, false);
+    } else if (user.password != password) {
+      return cb(null, false);
+    }
+    return cb(null, user);
+  }).catch(function(err) {
+    return err;
+  });
+}));
 
 
 // Configure Passport authenticated session persistence.
@@ -86,7 +86,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 app.use('/auth', auth);
-app.use("/projects", projects)
+app.use('/projects', projects)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

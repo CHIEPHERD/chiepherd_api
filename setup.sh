@@ -27,9 +27,20 @@ function SequelizeMigrate {
   sequelize db:migrate
 }
 
+function InstallRedis {
+  sudo apt-get install build-essential tcl -y
+  cd /tmp
+  curl -O http://download.redis.io/redis-stable.tar.gz
+  tar xzvf redis-stable.tar.gz
+  cd redis-stable
+  make
+  make install
+}
+
 echo 'Prepare the environement'; InstallEnv
 echo 'Installing Node...'; InstallNodeAndNpm
 echo 'Installing postgresql And sequelize-cli'; InstallPostgre
 echo 'Migrate db With Sequelize'; SequelizeMigrate
+echo 'Install Redis'; InstallRedis
 
 exit 0
