@@ -1,6 +1,7 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
   var project = sequelize.define('projects', {
+
     id: {
       allowNull: false,
       autoIncrement: true,

@@ -24,6 +24,7 @@ routerProject.get('/', function(req, res, next) {
     res.send(result);
     res.status = 200;
   });
+
 });
 
 //création et modification d'un projet
@@ -96,6 +97,7 @@ routerProject.put("/:id",function(req, res, next) {
       {
         console.log("allGood");
       });
+
     });
     res.status("200");
   });
