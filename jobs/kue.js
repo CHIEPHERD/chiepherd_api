@@ -9,7 +9,6 @@ Kue.prototype.run = function () {
   createQueueFor('project.show', jobs.project.show)
   createQueueFor('project.list', jobs.project.list)
 
-  createQueueFor('user.create', jobs.user.create)
   createQueueFor('user.update', jobs.user.update)
   createQueueFor('user.show', jobs.user.show)
   createQueueFor('user.list', jobs.user.list)
