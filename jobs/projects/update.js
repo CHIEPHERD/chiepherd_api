@@ -38,14 +38,14 @@ module.exports = function(connection, done) {
               ch.ack(msg);
             }).catch(function(error) {
               ch.sendToQueue(msg.properties.replyTo,
-                new Buffer.from(JSON.stringify(project)),
+                new Buffer(error.toString()),
                 { correlationId: msg.properties.correlationId });
               ch.ack(msg);
             });
           }
         }).catch(function(error) {
           ch.sendToQueue(msg.properties.replyTo,
-            new Buffer.from(JSON.stringify(project)),
+            new Buffer(error.toString()),
             { correlationId: msg.properties.correlationId });
           ch.ack(msg);
         });
