@@ -5,8 +5,14 @@ module.exports = function(sequelize, DataTypes) {
     id: {
       allowNull: false,
       autoIncrement: true,
+      unique: true,
       primaryKey: true,
       type: DataTypes.BIGINT
+    },
+    uuid: {
+      type: DataTypes.STRING,
+      unique: true,
+      primaryKey: true
     },
     name: {
       type: DataTypes.STRING,
