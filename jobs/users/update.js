@@ -28,12 +28,12 @@ module.exports = function(connection, done) {
               description: json.description
             }).then(function(user) {
               ch.sendToQueue(msg.properties.replyTo,
-                new Buffer.from(JSON.stringify(user)),
+                new Buffer.from(JSON.stringify(user.responsify())),
                 { correlationId: msg.properties.correlationId });
               connection.createChannel(function(error, channel) {
                 var ex = 'chiepherd.user.updated';
                 channel.assertExchange(ex, 'fanout', { durable: false });
-                channel.publish(ex, '', new Buffer.from(JSON.stringify(user)));
+                channel.publish(ex, '', new Buffer.from(JSON.stringify(user.responsify())));
               });
               ch.ack(msg);
             }).catch(function(error) {

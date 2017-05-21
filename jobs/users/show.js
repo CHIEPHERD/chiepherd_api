@@ -21,7 +21,7 @@ module.exports = function(connection, done) {
           }
         }).then(function(user) {
           ch.sendToQueue(msg.properties.replyTo,
-            new Buffer.from(JSON.stringify(user)),
+            new Buffer.from(JSON.stringify(user.responsify())),
             { correlationId: msg.properties.correlationId });
           ch.ack(msg);
         }).catch(function(error) {

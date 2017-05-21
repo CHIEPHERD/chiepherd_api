@@ -1,5 +1,6 @@
 const models = require('../../models');
 let User = models.users;
+var passwordHash = require('password-hash');
 
 module.exports = function(connection, done) {
   connection.createChannel(function(err, ch) {
@@ -22,10 +23,10 @@ module.exports = function(connection, done) {
         }).then(function(user) {
           if(json.password == json.passwordConfirmation) {
             user.update({
-              password: json.password
+              password: passwordHash.generate(json.password)
             }).then(function(user) {
               ch.sendToQueue(msg.properties.replyTo,
-                new Buffer.from(JSON.stringify(user)),
+                new Buffer.from(JSON.stringify(user.responsify())),
                 { correlationId: msg.properties.correlationId });
               ch.ack(msg);
             }).catch(function(error) {

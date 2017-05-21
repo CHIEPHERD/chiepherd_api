@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
 var Strategy = require('passport-local').Strategy;
+var passwordHash = require('password-hash');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -34,9 +35,12 @@ passport.use(new Strategy({
   session: false
 }, function(req, email, password, cb) {
   User.findOne({ where: { email: email }}).then(function(user) {
+    console.log('marf');
     if (!user) {
+      console.log('NOK PASS');
       return cb(null, false);
-    } else if (user.password != password) {
+    } else if (!passwordHash.verify(password, user.password)) {
+      console.log('NOK PASS');
       return cb(null, false);
     }
     return cb(null, user);
