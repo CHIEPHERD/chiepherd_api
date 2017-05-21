@@ -1,4 +1,5 @@
 const models = require('../../models');
+const uuidV4 = require('uuid/v4');
 let Project = models.projects;
 
 module.exports = function(connection, done) {
@@ -16,6 +17,7 @@ module.exports = function(connection, done) {
 
         // Create project
         Project.create({
+          uuid: uuidV4(),
           name: json.name,
           label: json.label,
           description: json.description
@@ -31,7 +33,7 @@ module.exports = function(connection, done) {
           ch.ack(msg);
         }).catch(function(error) {
           ch.sendToQueue(msg.properties.replyTo,
-            new Buffer.from(JSON.stringify(error)),
+            new Buffer(error.toString()),
             { correlationId: msg.properties.correlationId });
           ch.ack(msg);
         });
