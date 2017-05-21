@@ -72,7 +72,7 @@ module.exports = function(sequelize, DataTypes) {
         user.password = passwordHash.generate(user.password);
       },
       afterCreate: function(user) {
-        amqp.connect('amqp://root:root@192.168.56.1', function(err, conn) {
+        amqp.connect(process.env.amqp_ip, function(err, conn) {
           conn.createChannel(function(err, ch) {
             var ex = 'chiepherd.user.created';
             var key = Math.random().toString() + Math.random().toString();

@@ -13,6 +13,8 @@ var users = require('./routes/users');
 var auth = require('./routes/auth');
 var projects = require("./routes/projects");
 
+process.env.amqp_ip = 'amqp://root:root@192.168.56.1';
+
 var app = express();
 
 const models = require('./models');
