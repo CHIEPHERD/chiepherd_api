@@ -34,8 +34,6 @@ module.exports = function(connection, done) {
               });
               ch.ack(msg);
             }).catch(function(error) {
-              console.log('nok 2');
-
               ch.sendToQueue(msg.properties.replyTo,
                 new Buffer.from(JSON.stringify(user.responsify())),
                 { correlationId: msg.properties.correlationId });
