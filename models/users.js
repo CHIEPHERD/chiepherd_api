@@ -1,5 +1,6 @@
 'use strict'
 var amqp = require('amqplib/callback_api');
+var passwordHash = require('password-hash');
 
 module.exports = function(sequelize, DataTypes) {
   var Users = sequelize.define('users', {
@@ -56,7 +57,20 @@ module.exports = function(sequelize, DataTypes) {
         });
       }
     },
+    instanceMethods: {
+      responsify: function() {
+        let result = {}
+        result.id = this.id
+        result.lastname = this.lastname
+        result.firstname = this.firstname
+        result.email = this.email
+        return result
+      }
+    },
     hooks: {
+      beforeCreate: function(user) {
+        user.password = passwordHash.generate(user.password);
+      },
       afterCreate: function(user) {
         amqp.connect('amqp://root:root@192.168.56.1', function(err, conn) {
           conn.createChannel(function(err, ch) {
@@ -64,8 +78,8 @@ module.exports = function(sequelize, DataTypes) {
             var key = Math.random().toString() + Math.random().toString();
 
             ch.assertExchange(ex, 'fanout', { durable: false });
-            ch.publish(ex, key, new Buffer.from(JSON.stringify(user)));
-            console.log(' [%s]: %s', ex, JSON.stringify(user));
+            ch.publish(ex, key, new Buffer(JSON.stringify(user.responsify())));
+            console.log(' [%s]: %s', ex, JSON.stringify(user.responsify()));
           });
         });
       }
