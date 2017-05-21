@@ -42,7 +42,7 @@ module.exports = function(connection, done) {
           }
         }).catch(function(error) {
           ch.sendToQueue(msg.properties.replyTo,
-            new Buffer.from(JSON.stringify(error)),
+            new Buffer(error.toString()),
             { correlationId: msg.properties.correlationId });
           ch.ack(msg);
         });
