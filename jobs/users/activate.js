@@ -12,7 +12,7 @@ module.exports = function(connection, done) {
       ch.consume(q.queue, function(msg) {
         // LOG
         console.log(" [%s]: %s", msg.fields.routingKey, msg.content.toString());
-        let json = JSON.parse(msg.content.toString());
+        let json = JSON.parse(msg.content);
 
         // update user
         User.find({
@@ -22,7 +22,7 @@ module.exports = function(connection, done) {
         }).then(function(user) {
           if(user) {
             user.update({
-              active: json.active
+              isActive: json.active
             }).then(function(user) {
               ch.sendToQueue(msg.properties.replyTo,
                 new Buffer.from(JSON.stringify(user)),
@@ -34,6 +34,8 @@ module.exports = function(connection, done) {
               });
               ch.ack(msg);
             }).catch(function(error) {
+              console.log('nok 2');
+
               ch.sendToQueue(msg.properties.replyTo,
                 new Buffer.from(JSON.stringify(user)),
                 { correlationId: msg.properties.correlationId });

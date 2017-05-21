@@ -20,7 +20,7 @@ module.exports = function(connection, done) {
             email: json.email
           }
         }).then(function(user) {
-          if(json.password == json.password_confirmation) {
+          if(json.password == json.passwordConfirmation) {
             user.update({
               password: json.password
             }).then(function(user) {
@@ -30,7 +30,7 @@ module.exports = function(connection, done) {
               ch.ack(msg);
             }).catch(function(error) {
               ch.sendToQueue(msg.properties.replyTo,
-                new Buffer.from(JSON.stringify(error)),
+                new Buffer(error.toString()),
                 { correlationId: msg.properties.correlationId });
               ch.ack(msg);
             });
@@ -42,7 +42,7 @@ module.exports = function(connection, done) {
           }
         }).catch(function(error) {
           ch.sendToQueue(msg.properties.replyTo,
-            new Buffer.from(JSON.stringify(error)),
+            new Buffer(error.toString()),
             { correlationId: msg.properties.correlationId });
           ch.ack(msg);
         });
