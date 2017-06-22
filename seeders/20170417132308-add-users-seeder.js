@@ -17,7 +17,7 @@ module.exports = {
       firstname: 'Amelie',
       lastname: 'Certin',
       nickname: 'Kuma',
-      isActiv: false,
+      isActive: false,
       createdAt: new Date(),
       updatedAt: new Date()
     }, {
