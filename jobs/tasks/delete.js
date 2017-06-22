@@ -16,10 +16,12 @@ module.exports = function(connection, done) {
 
         // update task
         Task.destroy({
+          individualHooks: true,
           where: {
             uuid: json.uuid
           }
         }).then(function(task) {
+          console.log(task);
           ch.sendToQueue(msg.properties.replyTo,
             new Buffer.from(JSON.stringify(task)),
             { correlationId: msg.properties.correlationId });
