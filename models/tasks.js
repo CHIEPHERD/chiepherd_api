@@ -37,9 +37,20 @@ module.exports = function(sequelize, DataTypes) {
         Tasks.belongsTo(models.projects);
       }
     },
+    instanceMethods: {
+      responsify: function() {
+        let result = {}
+        result.id = this.id
+        result.uuid = this.uuid
+        result.title = this.title
+        result.description = this.description
+        result.type = this.type
+        result.ancestorId = this.ancestorId
+        return result
+      }
+    },
     hooks: {
       afterDestroy: function(task) {
-        console.log("DESTROY THE WORLD");
         Tasks.destroy({
           individualHooks: true,
           where: {

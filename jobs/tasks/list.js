@@ -20,8 +20,20 @@ module.exports = function(connection, done) {
             projectId: json.projectId
           }
         }).then(function(tasks) {
+          var map = {}, task, roots = [];
+          for (var i = 0; i < tasks.length; i++) {
+            task = tasks[i].responsify();
+            task.children = [];
+            map[task.id] = i;
+            if (task.ancestorId !== null) {
+              roots[map[task.ancestorId]].children.push(task);
+            } else {
+              roots.push(task);
+            }
+          }
+
           ch.sendToQueue(msg.properties.replyTo,
-            new Buffer.from(JSON.stringify(tasks)),
+            new Buffer.from(JSON.stringify(roots)),
             { correlationId: msg.properties.correlationId });
           ch.ack(msg);
         }).catch(function(error) {
