@@ -1,5 +1,6 @@
 const models = require('../../models');
 let Task = models.tasks;
+let Project = models.projects;
 
 module.exports = function(connection, done) {
   connection.createChannel(function(err, ch) {
@@ -15,33 +16,40 @@ module.exports = function(connection, done) {
         let json = JSON.parse(msg.content.toString());
 
         // List all tasks
-        Task.findAll({
+        Project.find({
           where: {
-            projectId: json.projectId
+            uuid: json.uuid
           }
-        }).then(function(tasks) {
-          var map = {}, task, roots = [];
-          for (var i = 0; i < tasks.length; i++) {
-            task = tasks[i].responsify();
-            task.children = [];
-            map[task.id] = i;
-            if (task.ancestorId !== null) {
-              roots[map[task.ancestorId]].children.push(task);
-            } else {
-              roots.push(task);
+        }).then(function (project) {
+          Task.findAll({
+            where: {
+              projectId: project.id
+            },
+            include: [{ model: Task, as: 'ancestor' }]
+          }).then(function(tasks) {
+            // console.log(tasks);
+            var map = {}, task, roots = [];
+            for (var i = 0; i < tasks.length; i++) {
+              task = tasks[i].simplify();
+              map[task.id] = i;
+              if (task.ancestorId !== null) {
+                roots[map[task.ancestorId]].children.push(tasks[i].responsify());
+              } else {
+                roots.push(tasks[i].responsify());
+              }
             }
-          }
-
-          ch.sendToQueue(msg.properties.replyTo,
-            new Buffer.from(JSON.stringify(roots)),
-            { correlationId: msg.properties.correlationId });
-          ch.ack(msg);
-        }).catch(function(error) {
-          ch.sendToQueue(msg.properties.replyTo,
-            new Buffer(error.toString()),
-            { correlationId: msg.properties.correlationId });
-          ch.ack(msg);
-        });
+            console.log(JSON.stringify(roots));
+            ch.sendToQueue(msg.properties.replyTo,
+              new Buffer.from(JSON.stringify(roots)),
+              { correlationId: msg.properties.correlationId });
+            ch.ack(msg);
+          }).catch(function(error) {
+            ch.sendToQueue(msg.properties.replyTo,
+              new Buffer(error.toString()),
+              { correlationId: msg.properties.correlationId });
+            ch.ack(msg);
+          });
+        })
       }, { noAck: false });
     });
   });

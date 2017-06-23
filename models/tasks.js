@@ -40,11 +40,17 @@ module.exports = function(sequelize, DataTypes) {
     instanceMethods: {
       responsify: function() {
         let result = {}
-        result.id = this.id
         result.uuid = this.uuid
         result.title = this.title
         result.description = this.description
         result.type = this.type
+        result.ancestorUuid = (this.ancestor != null || this.ancestor != undefined ? this.ancestor.uuid : null)
+        result.children = []
+        return result
+      },
+      simplify: function () {
+        let result = {}
+        result.id = this.id,
         result.ancestorId = this.ancestorId
         return result
       }
