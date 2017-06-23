@@ -18,10 +18,11 @@ module.exports = function(connection, done) {
         Task.find({
           where: {
             uuid: json.uuid
-          }
+          },
+          include: [{ model: Task, as: 'ancestor' }]
         }).then(function(task) {
           ch.sendToQueue(msg.properties.replyTo,
-            new Buffer.from(JSON.stringify(task)),
+            new Buffer.from(JSON.stringify(task.responsify)),
             { correlationId: msg.properties.correlationId });
           ch.ack(msg);
         }).catch(function(error) {

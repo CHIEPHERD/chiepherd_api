@@ -26,6 +26,16 @@ module.exports = function(sequelize, DataTypes) {
     },
   }, {
     paranoid: true,
+    instanceMethods: {
+      responsify: function () {
+        let result = {};
+        result.uuid = this.uuid;
+        result.name = this.name;
+        result.label = this.label;
+        result.description = this.description;
+        return result;
+      }
+    },
     classMethods: {
       associate: function(models) {
         project.belongsToMany(models.users, {

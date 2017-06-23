@@ -17,11 +17,11 @@ module.exports = function(connection, done) {
         // update project
         Project.find({
           where: {
-            id: json.id
+            uuid: json.uuid
           }
         }).then(function(project) {
           ch.sendToQueue(msg.properties.replyTo,
-            new Buffer.from(JSON.stringify(project)),
+            new Buffer.from(JSON.stringify(project.responsify())),
             { correlationId: msg.properties.correlationId });
           ch.ack(msg);
         }).catch(function(error) {
