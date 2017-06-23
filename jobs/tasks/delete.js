@@ -28,7 +28,7 @@ module.exports = function(connection, done) {
           connection.createChannel(function(error, channel) {
             var ex = 'chiepherd.task.deleted';
             channel.assertExchange(ex, 'fanout', { durable: false });
-            channel.publish(ex, '', new Buffer.from(JSON.stringify(task)));
+            channel.publish(ex, '', new Buffer(msg.content.toString()));
           });
           ch.ack(msg);
         }).catch(function(error) {

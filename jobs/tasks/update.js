@@ -27,10 +27,10 @@ module.exports = function(connection, done) {
           }).then(function (ancestor) {
             if(task) {
               task.update({
-                title: json.name,
-                description: json.description,
-                type: json.label,
-                ancestorId: ancestor.id
+                title: json.name || task.title,
+                description: json.description || task.description,
+                type: json.type || task.type,
+                ancestorId: (ancestor && ancestor.id) || task.ancestorId
               }).then(function(task) {
                 ch.sendToQueue(msg.properties.replyTo,
                   new Buffer.from(JSON.stringify(task.responsify())),
