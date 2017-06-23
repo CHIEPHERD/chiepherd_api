@@ -23,7 +23,7 @@ module.exports = function(connection, done) {
           description: json.description
         }).then(function(project) {
           ch.sendToQueue(msg.properties.replyTo,
-            new Buffer.from(JSON.stringify(project)),
+            new Buffer.from(JSON.stringify(project.responsify())),
             { correlationId: msg.properties.correlationId });
           connection.createChannel(function(error, channel) {
             var ex = 'chiepherd.project.created';

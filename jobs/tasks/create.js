@@ -36,8 +36,9 @@ module.exports = function(connection, done) {
               projectId: projectId,
               ancestorId: ancestorId
             }).then(function(task) {
+              task.ancestor = ancestor;
               ch.sendToQueue(msg.properties.replyTo,
-                new Buffer.from(JSON.stringify(task)),
+                new Buffer.from(JSON.stringify(task.responsify())),
                 { correlationId: msg.properties.correlationId });
               connection.createChannel(function(error, channel) {
                 var ex = 'chiepherd.task.created';
@@ -51,9 +52,8 @@ module.exports = function(connection, done) {
                 { correlationId: msg.properties.correlationId });
               ch.ack(msg);
             });
-          })
-        })
-
+          });
+        });
       }, { noAck: false });
     });
   });

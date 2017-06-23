@@ -17,7 +17,7 @@ module.exports = function(connection, done) {
         // update project
         Project.find({
           where: {
-            id: json.id
+            uuid: json.uuid
           }
         }).then(function(project) {
           if(project) {

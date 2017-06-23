@@ -16,6 +16,9 @@ module.exports = function(connection, done) {
 
         // List all projects
         Project.findAll().then(function(projects) {
+          for (var i = 0; i < projects.length; i++) {
+            projects[i] = projects[i].responsify();
+          }
           ch.sendToQueue(msg.properties.replyTo,
             new Buffer.from(JSON.stringify(projects)),
             { correlationId: msg.properties.correlationId });

@@ -20,29 +20,35 @@ module.exports = function(connection, done) {
             uuid: json.uuid
           }
         }).then(function(task) {
-          if(task) {
-            task.update({
-              title: json.name,
-              description: json.description,
-              type: json.label,
-              ancestorId: json.ancestor
-            }).then(function(task) {
-              ch.sendToQueue(msg.properties.replyTo,
-                new Buffer.from(JSON.stringify(task)),
-                { correlationId: msg.properties.correlationId });
-              connection.createChannel(function(error, channel) {
-                var ex = 'chiepherd.task.updated';
-                channel.assertExchange(ex, 'fanout', { durable: false });
-                channel.publish(ex, '', new Buffer.from(JSON.stringify(task)));
+          Task.find({
+            where: {
+              uuid: json.ancestor
+            }
+          }).then(function (ancestor) {
+            if(task) {
+              task.update({
+                title: json.name,
+                description: json.description,
+                type: json.label,
+                ancestorId: ancestor.id
+              }).then(function(task) {
+                ch.sendToQueue(msg.properties.replyTo,
+                  new Buffer.from(JSON.stringify(task.responsify())),
+                  { correlationId: msg.properties.correlationId });
+                connection.createChannel(function(error, channel) {
+                  var ex = 'chiepherd.task.updated';
+                  channel.assertExchange(ex, 'fanout', { durable: false });
+                  channel.publish(ex, '', new Buffer.from(JSON.stringify(task)));
+                });
+                ch.ack(msg);
+              }).catch(function(error) {
+                ch.sendToQueue(msg.properties.replyTo,
+                  new Buffer(error.toString()),
+                  { correlationId: msg.properties.correlationId });
+                ch.ack(msg);
               });
-              ch.ack(msg);
-            }).catch(function(error) {
-              ch.sendToQueue(msg.properties.replyTo,
-                new Buffer(error.toString()),
-                { correlationId: msg.properties.correlationId });
-              ch.ack(msg);
-            });
-          }
+            }
+          })
         }).catch(function(error) {
           ch.sendToQueue(msg.properties.replyTo,
             new Buffer(error.toString()),
