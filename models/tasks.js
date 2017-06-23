@@ -45,6 +45,7 @@ module.exports = function(sequelize, DataTypes) {
         result.description = this.description
         result.type = this.type
         result.ancestorUuid = (this.ancestor != null || this.ancestor != undefined ? this.ancestor.uuid : null)
+        result.projectUuid = (this.projectUuid != undefined ? this.projectUuid : null)
         result.children = []
         return result
       },
@@ -52,6 +53,7 @@ module.exports = function(sequelize, DataTypes) {
         let result = {}
         result.id = this.id,
         result.ancestorId = this.ancestorId
+        result.uuid = this.uuid
         return result
       }
     },
