@@ -22,10 +22,10 @@ module.exports = function(connection, done) {
         }).then(function(project) {
           if(project) {
             project.update({
-              name: json.name,
-              label: json.label,
-              description: json.description,
-              visibility: json.visibility
+              name: json.name || project.name,
+              label: json.label || project.label,
+              description: json.description || project.description,
+              visibility: json.visibility || project.visibility
             }).then(function(project) {
               ch.sendToQueue(msg.properties.replyTo,
                 new Buffer.from(JSON.stringify(project)),
