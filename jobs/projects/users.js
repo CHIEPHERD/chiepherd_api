@@ -8,25 +8,25 @@ module.exports = function(connection, done) {
     console.log(err);
     var ex = 'chiepherd.main';
     ch.assertExchange(ex, 'topic');
-    ch.assertQueue('chiepherd.user.projects', { exclusive: false }, function(err, q) {
-      ch.bindQueue(q.queue, ex, "chiepherd.user.projects")
+    ch.assertQueue('chiepherd.project.users', { exclusive: false }, function(err, q) {
+      ch.bindQueue(q.queue, ex, "chiepherd.project.users")
 
       ch.consume(q.queue, function(msg) {
         // LOG
         console.log(" [%s]: %s", msg.fields.routingKey, msg.content.toString());
         let json = JSON.parse(msg.content.toString());
 
-        User.find({
+        Project.find({
           where: {
-            email: json.email
+            projectUuid: json.projectUuid
           }
-        }).then(function (user) {
-          if (user != null) {
+        }).then(function (project) {
+          if (project != null) {
             ProjectAssignment.findAll({
               where: {
-                userId: user.id
+                projectId: project.id
               },
-              include: [{ model: Project, as: 'project' }]
+              include: [{ model: User, as: 'user' }]
             }).then(function (projectAssignments) {
               for (var i = 0; i < projectAssignments.length; i++) {
                 projectAssignments[i] = projectAssignments[i].responsify();
@@ -43,10 +43,9 @@ module.exports = function(connection, done) {
             });
           } else {
             ch.sendToQueue(msg.properties.replyTo,
-              new Buffer("Unknown user."),
+              new Buffer("Unknown project."),
               { correlationId: msg.properties.correlationId });
-            ch.ack(msg);
-          }
+            ch.ack(msg);          }
         }).catch(function (error) {
           ch.sendToQueue(msg.properties.replyTo,
             new Buffer(error.toString()),
