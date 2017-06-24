@@ -35,7 +35,7 @@ module.exports = function(sequelize, DataTypes) {
         if (this.user != undefined) {
           result.user = this.user.responsify();
         }
-        return reault;
+        return result;
       }
     }
   });
