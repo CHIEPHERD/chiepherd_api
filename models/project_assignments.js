@@ -17,6 +17,15 @@ module.exports = function(sequelize, DataTypes) {
         project_assignment.belongsTo(models.users);
         project_assignment.belongsTo(models.projects);
       }
+    },
+    instanceMethods: {
+      responsify: function () {
+        result = {};
+        result.rank = this.rank;
+        result.email = (this.email == undefined ? null : this.email);
+        result.projectUuid = (this.projectUuid == undefined ? null : this.projectUuid);
+        return reault;
+      }
     }
   });
   return project_assignment;
