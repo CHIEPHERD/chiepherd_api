@@ -1,5 +1,4 @@
 const models = require('../../models');
-const uuidV4 = require('uuid/v4');
 let Project = models.projects;
 let ProjectAssignment = models.project_assignments;
 let User = models.users;
