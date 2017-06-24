@@ -25,9 +25,9 @@ router.post('/register', function(req, res) {
       password: req.body.password,
       firstname: req.body.firstname,
       lastname: req.body.lastname
-    }).then(function() {
+    }).then(function(user) {
       passport.authenticate('local') (req, res, function () {
-        res.redirect('/');
+        res.status(200).send(user.responsify());
       });
     }).catch(function(error) {
       res.status(422).send(error);
