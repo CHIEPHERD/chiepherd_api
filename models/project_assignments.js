@@ -32,6 +32,9 @@ module.exports = function(sequelize, DataTypes) {
         if (this.project != undefined) {
           result.project = this.project.responsify();
         }
+        if (this.user != undefined) {
+          result.user = this.user.responsify();
+        }
         return reault;
       }
     }
