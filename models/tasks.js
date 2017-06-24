@@ -32,7 +32,7 @@ module.exports = function(sequelize, DataTypes) {
           as: 'ancestor'
         });
         Tasks.belongsToMany(models.users, {
-          through: 'users_tasks'
+          through: 'task_assignments'
         });
         Tasks.belongsTo(models.projects);
       }

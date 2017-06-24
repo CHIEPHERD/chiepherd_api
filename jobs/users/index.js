@@ -4,5 +4,6 @@ module.exports = {
   list: require('./list'),
   activate: require('./activate'),
   reset_password: require('./reset_password'),
-  projects: require('./projects')
+  projects: require('./projects'),
+  tasks: require('./tasks')
 }
