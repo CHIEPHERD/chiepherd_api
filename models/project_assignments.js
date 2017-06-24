@@ -29,6 +29,9 @@ module.exports = function(sequelize, DataTypes) {
         result.rank = this.rank;
         result.email = (this.email == undefined ? null : this.email);
         result.projectUuid = (this.projectUuid == undefined ? null : this.projectUuid);
+        if (this.project != undefined) {
+          result.project = this.project.responsify();
+        }
         return reault;
       }
     }
