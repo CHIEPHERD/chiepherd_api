@@ -23,6 +23,7 @@ Kue.prototype.run = function () {
 
   createQueueFor('project_assignment.create', jobs.project_assignment.create)
   createQueueFor('project_assignment.update', jobs.project_assignment.update)
+  createQueueFor('project_assignment.delete', jobs.project_assignment.delete)
 }
 
 function createQueueFor(resource, job) {
