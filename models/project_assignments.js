@@ -9,6 +9,10 @@ module.exports = function(sequelize, DataTypes) {
     },
     rank: {
       type: DataTypes.ENUM('Scrum', 'Lead', 'Dev', 'Product owner')
+    },
+    uuid: {
+      type: DataTypes.STRING,
+      unique: true
     }
   }, {
     paranoid: true,
@@ -21,6 +25,7 @@ module.exports = function(sequelize, DataTypes) {
     instanceMethods: {
       responsify: function () {
         result = {};
+        result.uuid = this.uuid;
         result.rank = this.rank;
         result.email = (this.email == undefined ? null : this.email);
         result.projectUuid = (this.projectUuid == undefined ? null : this.projectUuid);

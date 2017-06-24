@@ -1,4 +1,5 @@
 const models = require('../../models');
+const uuidV4 = require('uuid/v4');
 let Project = models.projects;
 let User = models.users;
 let ProjectAssignment = models.project_assignment;
@@ -36,6 +37,7 @@ module.exports = function(connection, done) {
                 }).then(function (assignment) {
                   if (assignment == null) {
                     ProjectAssignment.create({
+                      uuid: uuidV4(),
                       projectId: project.id,
                       userId: user.id,
                       rank: json.rank
