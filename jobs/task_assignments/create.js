@@ -20,7 +20,7 @@ module.exports = function(connection, done) {
 
         User.find({
           where: {
-            uuid: json.userUuid
+            email: json.email
           }
         }).then(function (user) {
           if (user != null) {
@@ -48,8 +48,15 @@ module.exports = function(connection, done) {
                           userId: user.id,
                           taskId: task.id
                         }).then(function (taskAssignment) {
-                          // return
+                          taskAssignment.user = user.responsify();
+                          taskAssignment.task = task.responsify();
+                          console.log('from res');
+                          console.log(taskAssignment);
+                          ch.sendToQueue(msg.properties.replyTo,
+                            new Buffer.from(JSON.stringify(taskAssignment.responsify())),
+                            { correlationId: msg.properties.correlationId });
                         }).catch(function (error) {
+                          console.log(error);
                           ch.sendToQueue(msg.properties.replyTo,
                             new Buffer(error.toString()),
                             { correlationId: msg.properties.correlationId });

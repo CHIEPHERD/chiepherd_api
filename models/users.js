@@ -60,7 +60,6 @@ module.exports = function(sequelize, DataTypes) {
     instanceMethods: {
       responsify: function() {
         let result = {}
-        result.id = this.id
         result.lastname = this.lastname
         result.firstname = this.firstname
         result.email = this.email
