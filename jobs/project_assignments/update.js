@@ -8,8 +8,8 @@ module.exports = function(connection, done) {
     console.log(err);
     var ex = 'chiepherd.main';
     ch.assertExchange(ex, 'topic');
-    ch.assertQueue('chiepherd.project_assignment.create', { exclusive: false }, function(err, q) {
-      ch.bindQueue(q.queue, ex, "chiepherd.project_assignment.create")
+    ch.assertQueue('chiepherd.project_assignment.update', { exclusive: false }, function(err, q) {
+      ch.bindQueue(q.queue, ex, "chiepherd.project_assignment.update")
 
       ch.consume(q.queue, function(msg) {
         // LOG
@@ -35,7 +35,7 @@ module.exports = function(connection, done) {
                   }
                 }).then(function (assignment) {
                   if (assignment != null) {
-                    projectAssignment.find({
+                    ProjectAssignment.find({
                       where: {
                         projectId: project.id,
                         userId: user.id,
