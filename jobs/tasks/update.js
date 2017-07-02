@@ -22,7 +22,7 @@ module.exports = function(connection, done) {
         }).then(function(task) {
           Task.find({
             where: {
-              uuid: json.ancestor
+              uuid: json.ancestorUuid
             }
           }).then(function (ancestor) {
             if(task) {

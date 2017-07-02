@@ -18,7 +18,7 @@ module.exports = function(connection, done) {
 
         Project.find({
           where: {
-            projectUuid: json.projectUuid
+            uuid: json.uuid
           }
         }).then(function (project) {
           if (project != null) {

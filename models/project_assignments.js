@@ -24,7 +24,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     instanceMethods: {
       responsify: function () {
-        result = {};
+        let result = {};
         result.uuid = this.uuid;
         result.rank = this.rank;
         result.email = (this.email == undefined ? null : this.email);

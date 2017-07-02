@@ -1,7 +1,7 @@
 const models = require('../../models');
 let Project = models.projects;
 let User = models.users;
-let ProjectAssignment = models.project_assignment;
+let ProjectAssignment = models.project_assignments;
 
 module.exports = function(connection, done) {
   connection.createChannel(function(err, ch) {
@@ -81,7 +81,7 @@ module.exports = function(connection, done) {
                     });
                   } else {
                     ch.sendToQueue(msg.properties.replyTo,
-                      new Buffer("Unknown project assignment."),
+                      new Buffer("This user already belongs to this project."),
                       { correlationId: msg.properties.correlationId });
                     ch.ack(msg);
                   }

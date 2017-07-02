@@ -17,12 +17,12 @@ module.exports = function(sequelize, DataTypes) {
     },
     instanceMethods: {
       responsify: function () {
-        result = {};
-        if (this.project != undefined) {
-          result.task = this.task.responsify();
+        let result = {};
+        if (this.task != undefined) {
+          result.task = this.task;
         }
         if (this.user != undefined) {
-          result.user = this.user.responsify();
+          result.user = this.user;
         }
         return result;
       }

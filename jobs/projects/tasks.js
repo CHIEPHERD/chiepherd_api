@@ -7,8 +7,8 @@ module.exports = function(connection, done) {
     console.log(err);
     var ex = 'chiepherd.main';
     ch.assertExchange(ex, 'topic');
-    ch.assertQueue('chiepherd.task.list', { exclusive: false }, function(err, q) {
-      ch.bindQueue(q.queue, ex, "chiepherd.task.list")
+    ch.assertQueue('chiepherd.project.tasks', { exclusive: false }, function(err, q) {
+      ch.bindQueue(q.queue, ex, "chiepherd.project.tasks")
 
       ch.consume(q.queue, function(msg) {
         // LOG

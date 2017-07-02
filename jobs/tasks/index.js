@@ -3,6 +3,5 @@ module.exports = {
   update: require('./update'),
   show: require('./show'),
   delete: require('./delete'),
-  list: require('./list'),
   users: require('./users')
 }

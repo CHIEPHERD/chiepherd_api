@@ -2,7 +2,7 @@ const models = require('../../models');
 const uuidV4 = require('uuid/v4');
 let Project = models.projects;
 let User = models.users;
-let ProjectAssignment = models.project_assignment;
+let ProjectAssignment = models.project_assignments;
 
 module.exports = function(connection, done) {
   connection.createChannel(function(err, ch) {

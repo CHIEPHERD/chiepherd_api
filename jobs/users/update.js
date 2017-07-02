@@ -22,10 +22,10 @@ module.exports = function(connection, done) {
         }).then(function(user) {
           if(user) {
             user.update({
-              lastname: json.lastname,
-              firstname: json.firstname,
-              nickname: json.nickname,
-              description: json.description
+              lastname: json.lastname || user.lastname,
+              firstname: json.firstname || user.firstname,
+              nickname: json.nickname || user.nickname,
+              description: json.description || user.description
             }).then(function(user) {
               ch.sendToQueue(msg.properties.replyTo,
                 new Buffer.from(JSON.stringify(user.responsify())),

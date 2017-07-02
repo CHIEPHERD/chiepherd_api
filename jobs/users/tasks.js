@@ -19,7 +19,7 @@ module.exports = function(connection, done) {
 
         User.find({
           where: {
-            uuid: json.userUuid
+            email: json.email
           }
         }).then(function (user) {
           if (user != null) {
@@ -47,8 +47,11 @@ module.exports = function(connection, done) {
                     },
                     include: [{ model: Task, as: 'task' }]
                   }).then(function (assignments) {
+                    for (var i = 0; i < assignments.length; i++) {
+                      assignments[i] = assignments[i].responsify()
+                    }
                     ch.sendToQueue(msg.properties.replyTo,
-                      new Buffer.from(JSON.stringify(assignments.responsify())),
+                      new Buffer.from(JSON.stringify(assignments)),
                       { correlationId: msg.properties.correlationId });
                     ch.ack(msg);
                   })
