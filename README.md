@@ -1,10 +1,46 @@
 # chiepherd_api
 
-### Infos pratique
-Pour taper l'api, utiliser 192.168.56.103:3000
+## Infos pratique
+Pour taper dans l'api, utiliser 192.168.56.103:3000
 
 ---
-### Description
+## Routing keys
+
+### Pojects
+- chiepherd.project.create
+- chiepherd.project.update
+- chiepherd.project.show
+- chiepherd.project.tasks
+- chiepherd.project.list
+
+### Tasks
+- chiepherd.task.create
+- chiepherd.task.update
+- chiepherd.task.show
+- chiepherd.task.delete
+
+### Users
+- chiepherd.user.update
+- chiepherd.user.show
+- chiepherd.user.list
+- chiepherd.user.activate
+- chiepherd.user.reset_password
+
+### Project Assignments
+- chiepherd.project.users
+- chiepherd.user.projects
+- chiepherd.project_assignment.create
+- chiepherd.project_assignment.update
+- chiepherd.project_assignment.delete
+
+### Task Assignments
+- chiepherd.task_assignment.create
+- chiepherd.task_assignment.delete
+- chiepherd.task.users
+- chiepherd.user.tasks
+
+---
+## Description
 Cette API est le bloc principal de la solution logicielle. Elle permet en effet la gestion des tâches, des projets, et celle des utilisateurs.
 
 De nouveaux utilisateurs peuvent rejoindre le système, éditer leur profile, ou même supprimer leur compte.

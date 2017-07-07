@@ -29,15 +29,15 @@ module.exports = function(connection, done) {
               label: json.label,
               description: json.description
             }).then(function(project) {
-              // connection.createChannel(function(error, channel) {
-              //   var ex = 'chiepherd.project_assignment.create';
-              //   channel.assertExchange(ex, 'fanout', { durable: true });
-              //   channel.publish(ex, '', new Buffer.from(JSON.stringify({
-              //     rank: 'Lead',
-              //     projectUuid: project.uuid,
-              //     email: user.email
-              //   })));
-              // });
+              connection.createChannel(function(error, channel) {
+                var ex = 'chiepherd.project_assignment.create';
+                channel.assertExchange(ex, 'fanout', { durable: true });
+                channel.publish(ex, '', new Buffer.from(JSON.stringify({
+                  rank: 'Lead',
+                  projectUuid: project.uuid,
+                  email: user.email
+                })));
+              });
               ch.sendToQueue(msg.properties.replyTo,
                 new Buffer.from(JSON.stringify(project.responsify())),
                 { correlationId: msg.properties.correlationId });
@@ -48,6 +48,7 @@ module.exports = function(connection, done) {
               });
               ch.ack(msg);
             }).catch(function(error) {
+              console.log(error);
               ch.sendToQueue(msg.properties.replyTo,
                 new Buffer(error.toString()),
                 { correlationId: msg.properties.correlationId });
@@ -60,6 +61,7 @@ module.exports = function(connection, done) {
             ch.ack(msg);
           }
         }).catch(function (error) {
+          console.log(error);
           ch.sendToQueue(msg.properties.replyTo,
             new Buffer(error.toString()),
             { correlationId: msg.properties.correlationId });
