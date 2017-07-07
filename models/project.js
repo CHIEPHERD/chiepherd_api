@@ -15,8 +15,7 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true
     },
     name: {
-      type: DataTypes.STRING,
-      unique: true,
+      type: DataTypes.STRING
     },
     label: DataTypes.TEXT,
     description: DataTypes.TEXT,

@@ -23,7 +23,7 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: ''
     },
     type: {
-      type: DataTypes.ENUM('Theme', 'User story', 'Task'),
+      type: DataTypes.ENUM('Epic', 'User story', 'Task'),
     }
   }, {
     classMethods: {

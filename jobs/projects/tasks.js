@@ -1,6 +1,8 @@
 const models = require('../../models');
 let Task = models.tasks;
 let Project = models.projects;
+let ProjectAssignment = models.project_assignments;
+let User = models.users;
 
 module.exports = function(connection, done) {
   connection.createChannel(function(err, ch) {
