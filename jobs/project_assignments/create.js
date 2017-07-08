@@ -19,7 +19,8 @@ module.exports = function(connection, done) {
 
         User.find({
           where: {
-            email: json.email
+            email: json.email,
+            isAdmin: false
           }
         }).then(function (user) {
           if (user != null) {

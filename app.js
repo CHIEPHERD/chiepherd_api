@@ -9,9 +9,9 @@ var Strategy = require('passport-local').Strategy;
 var passwordHash = require('password-hash');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
-var auth = require('./routes/auth');
-var projects = require("./routes/projects");
+var admin = require('./routes/admin');
+var user = require('./routes/user');
+
 
 process.env.amqp_ip = 'amqp://root:root@192.168.56.1';
 
@@ -36,7 +36,9 @@ passport.use(new Strategy({
   passReqToCallback: true,
   session: false
 }, function(req, email, password, cb) {
-  User.findOne({ where: { email: email }}).then(function(user) {
+  let query = { where: { email: email }}
+  query.where.isAdmin = (req.originalUrl == '/admin/login' ? true : false)
+  User.findOne(query).then(function(user) {
     if (!user) {
       return cb(null, false);
     } else if (!passwordHash.verify(password, user.password)) {
@@ -87,9 +89,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/users', users);
-app.use('/auth', auth);
-app.use('/projects', projects)
+app.use('/user', user);
+app.use('/admin', admin);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

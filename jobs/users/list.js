@@ -16,6 +16,9 @@ module.exports = function(connection, done) {
 
         // List all users
         User.findAll().then(function(users) {
+          for (var i = 0; i < users.length; i++) {
+            users[i] = users[i].responsify();
+          }
           ch.sendToQueue(msg.properties.replyTo,
             new Buffer.from(JSON.stringify(users)),
             { correlationId: msg.properties.correlationId });
