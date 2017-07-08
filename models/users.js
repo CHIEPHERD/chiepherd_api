@@ -62,6 +62,10 @@ module.exports = function(sequelize, DataTypes) {
         let result = {}
         result.lastname = this.lastname
         result.firstname = this.firstname
+        result.nickname = this.nickname
+        result.description = this.description
+        result.isAdmin = this.isAdmin
+        result.isActive = this.isActive
         result.email = this.email
         return result
       }
