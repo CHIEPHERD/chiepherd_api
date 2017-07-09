@@ -14,6 +14,7 @@ var user = require('./routes/user');
 
 
 process.env.amqp_ip = 'amqp://root:root@192.168.56.1';
+process.env.ex = 'chiepherd.main';
 
 var app = express();
 

@@ -6,10 +6,11 @@ let Project = models.projects;
 module.exports = function(connection, done) {
   connection.createChannel(function(err, ch) {
     console.log(err);
-    var ex = 'chiepherd.main';
+    var ex = process.env.ex;
+    var queue = 'chiepherd.task.create';
     ch.assertExchange(ex, 'topic');
-    ch.assertQueue('chiepherd.task.create', { exclusive: false }, function(err, q) {
-      ch.bindQueue(q.queue, ex, "chiepherd.task.create")
+    ch.assertQueue(queue, { exclusive: false }, function(err, q) {
+      ch.bindQueue(q.queue, ex, queue)
 
       ch.consume(q.queue, function(msg) {
         // LOG
@@ -57,9 +58,8 @@ module.exports = function(connection, done) {
                     new Buffer.from(JSON.stringify(task.responsify())),
                     { correlationId: msg.properties.correlationId });
                   connection.createChannel(function(error, channel) {
-                    var ex = 'chiepherd.task.created';
-                    channel.assertExchange(ex, 'fanout', { durable: false });
-                    channel.publish(ex, '', new Buffer.from(JSON.stringify(task.responsify())));
+                    channel.assertExchange(ex, 'topic');
+                    channel.publish(ex, queue + '.reply', new Buffer.from(JSON.stringify(task.responsify())));
                   });
                   ch.ack(msg);
                 }).catch(function(error) {

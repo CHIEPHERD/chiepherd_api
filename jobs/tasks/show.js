@@ -4,7 +4,7 @@ let Task = models.tasks;
 module.exports = function(connection, done) {
   connection.createChannel(function(err, ch) {
     console.log(err);
-    var ex = 'chiepherd.main';
+    var ex = process.env.ex;
     ch.assertExchange(ex, 'topic');
     ch.assertQueue('chiepherd.task.show', { exclusive: false }, function(err, q) {
       ch.bindQueue(q.queue, ex, "chiepherd.task.show")

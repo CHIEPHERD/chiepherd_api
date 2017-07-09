@@ -4,7 +4,7 @@ let User = models.users;
 module.exports = function(connection, done) {
   connection.createChannel(function(err, ch) {
     console.log(err);
-    var ex = 'chiepherd.main';
+    var ex = process.env.ex;
     ch.assertExchange(ex, 'topic');
     ch.assertQueue('chiepherd.user.show', { exclusive: false }, function(err, q) {
       ch.bindQueue(q.queue, ex, "chiepherd.user.show")

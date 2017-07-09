@@ -6,10 +6,12 @@ let User = models.users;
 module.exports = function(connection, done) {
   connection.createChannel(function(err, ch) {
     console.log(err);
-    var ex = 'chiepherd.main';
+    var ex = process.env.ex;
+    var queue = 'chiepherd.project.create';
     ch.assertExchange(ex, 'topic');
-    ch.assertQueue('chiepherd.project.create', { exclusive: false }, function(err, q) {
-      ch.bindQueue(q.queue, ex, "chiepherd.project.create")
+
+    ch.assertQueue(queue, { exclusive: false }, function(err, q) {
+      ch.bindQueue(q.queue, ex, queue)
 
       ch.consume(q.queue, function(msg) {
         // LOG
@@ -29,22 +31,20 @@ module.exports = function(connection, done) {
               label: json.label,
               description: json.description
             }).then(function(project) {
-              connection.createChannel(function(error, channel) {
-                var ex = 'chiepherd.project_assignment.create';
-                channel.assertExchange(ex, 'fanout', { durable: true });
-                channel.publish(ex, '', new Buffer.from(JSON.stringify({
-                  rank: 'Lead',
-                  projectUuid: project.uuid,
-                  email: user.email
-                })));
-              });
               ch.sendToQueue(msg.properties.replyTo,
                 new Buffer.from(JSON.stringify(project.responsify())),
                 { correlationId: msg.properties.correlationId });
               connection.createChannel(function(error, channel) {
-                var ex = 'chiepherd.project.created';
-                channel.assertExchange(ex, 'fanout', { durable: false });
-                channel.publish(ex, '', new Buffer.from(JSON.stringify(project)));
+                channel.assertExchange(ex, 'topic');
+                channel.publish(ex, queue + '.reply', new Buffer.from(JSON.stringify(project)));
+              });
+              connection.createChannel(function(error, channel) {
+                channel.assertExchange(ex, 'topic');
+                channel.publish(ex, 'chiepherd.project_assignment.create', new Buffer.from(JSON.stringify({
+                  rank: 'Lead',
+                  projectUuid: project.uuid,
+                  email: user.email
+                })));
               });
               ch.ack(msg);
             }).catch(function(error) {
