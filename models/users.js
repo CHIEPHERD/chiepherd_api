@@ -77,10 +77,10 @@ module.exports = function(sequelize, DataTypes) {
       afterCreate: function(user) {
         amqp.connect(process.env.amqp_ip, function(err, conn) {
           conn.createChannel(function(err, ch) {
-            var ex = 'chiepherd.user.created';
-            var key = Math.random().toString() + Math.random().toString();
+            var ex = 'chiepherd.main';
+            var key = 'chiepherd.user.create.reply';
 
-            ch.assertExchange(ex, 'fanout', { durable: false });
+            ch.assertExchange(ex, 'topic');
             ch.publish(ex, key, new Buffer(JSON.stringify(user.responsify())));
             console.log(' [%s]: %s', ex, JSON.stringify(user.responsify()));
           });
