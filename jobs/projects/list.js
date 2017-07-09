@@ -5,9 +5,11 @@ module.exports = function(connection, done) {
   connection.createChannel(function(err, ch) {
     console.log(err);
     var ex = process.env.ex;
+    var queue = 'chiepherd.project.list';
+    
     ch.assertExchange(ex, 'topic');
-    ch.assertQueue('chiepherd.project.list', { exclusive: false }, function(err, q) {
-      ch.bindQueue(q.queue, ex, "chiepherd.project.list")
+    ch.assertQueue(queue, { exclusive: false }, function(err, q) {
+      ch.bindQueue(q.queue, ex, queue)
 
       ch.consume(q.queue, function(msg) {
         // LOG

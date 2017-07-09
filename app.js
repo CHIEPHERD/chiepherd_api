@@ -21,9 +21,9 @@ var app = express();
 const models = require('./models');
 const User = models.users
 
-models.sequelize.sync({
-  force: true
-})
+// models.sequelize.sync({
+//   force: true
+// })
 
 // Configure the local strategy for use by Passport.
 //
