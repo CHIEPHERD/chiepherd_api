@@ -6,7 +6,7 @@ let ProjectAssignment = models.project_assignments;
 module.exports = function(connection, done) {
   connection.createChannel(function(err, ch) {
     console.log(err);
-    var ex = 'chiepherd.main';
+    var ex = process.env.ex;
     ch.assertExchange(ex, 'topic');
     ch.assertQueue('chiepherd.project_assignment.delete', { exclusive: false }, function(err, q) {
       ch.bindQueue(q.queue, ex, "chiepherd.project_assignment.delete")
@@ -26,9 +26,8 @@ module.exports = function(connection, done) {
               new Buffer.from(JSON.stringify({ status: 'removed' })),
               { correlationId: msg.properties.correlationId });
             connection.createChannel(function(error, channel) {
-              var ex = 'chiepherd.project_assignment.deleted';
-              channel.assertExchange(ex, 'fanout', { durable: false });
-              channel.publish(ex, '', new Buffer(msg.content.toString()));
+              channel.assertExchange(ex, 'topic');
+              channel.publish(ex, queue + '.reply', new Buffer(msg.content.toString()));
             });
             ch.ack(msg);
           }).catch(function (error) {

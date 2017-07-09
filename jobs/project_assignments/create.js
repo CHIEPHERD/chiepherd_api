@@ -7,10 +7,11 @@ let ProjectAssignment = models.project_assignments;
 module.exports = function(connection, done) {
   connection.createChannel(function(err, ch) {
     console.log(err);
-    var ex = 'chiepherd.main';
+    var ex = process.env.ex;
+    var queue = 'chiepherd.project_assignment.create';
     ch.assertExchange(ex, 'topic');
-    ch.assertQueue('chiepherd.project_assignment.create', { exclusive: false }, function(err, q) {
-      ch.bindQueue(q.queue, ex, "chiepherd.project_assignment.create")
+    ch.assertQueue(queue, { exclusive: false }, function(err, q) {
+      ch.bindQueue(q.queue, ex, queue)
 
       ch.consume(q.queue, function(msg) {
         // LOG
@@ -49,9 +50,8 @@ module.exports = function(connection, done) {
                         new Buffer.from(JSON.stringify(projectAssignment.responsify())),
                         { correlationId: msg.properties.correlationId });
                       connection.createChannel(function(error, channel) {
-                        var ex = 'chiepherd.project_assignment.created';
-                        channel.assertExchange(ex, 'fanout', { durable: false });
-                        channel.publish(ex, '', new Buffer.from(JSON.stringify(projectAssignment.responsify())));
+                        channel.assertExchange(ex, 'topic');
+                        channel.publish(ex, queue + '.reply', new Buffer.from(JSON.stringify(projectAssignment.responsify())));
                       });
                     }).catch(function (error) {
                       console.log(error);
@@ -99,7 +99,7 @@ module.exports = function(connection, done) {
             { correlationId: msg.properties.correlationId });
           ch.ack(msg);
         });
-      }, { noAck: false });
+      }, { noAck: true });
     });
   });
   done();
