@@ -21,6 +21,8 @@ Kue.prototype.run = function () {
   createQueueFor('user.activate', jobs.user.activate);
   createQueueFor('user.reset_password', jobs.user.reset_password);
 
+  createQueueFor('admin.list', jobs.admin.list);
+
   createQueueFor('project.users', jobs.project.users);
   createQueueFor('user.projects', jobs.user.projects);
   createQueueFor('project_assignment.create', jobs.project_assignment.create);

@@ -7,9 +7,11 @@ module.exports = function(connection, done) {
   connection.createChannel(function(err, ch) {
     console.log(err);
     var ex = process.env.ex;
+    var queue = 'chiepherd.project.users';
+    
     ch.assertExchange(ex, 'topic');
-    ch.assertQueue('chiepherd.project.users', { exclusive: false }, function(err, q) {
-      ch.bindQueue(q.queue, ex, "chiepherd.project.users")
+    ch.assertQueue(queue, { exclusive: false }, function(err, q) {
+      ch.bindQueue(q.queue, ex, queue)
 
       ch.consume(q.queue, function(msg) {
         // LOG
@@ -24,7 +26,8 @@ module.exports = function(connection, done) {
           if (project != null) {
             ProjectAssignment.findAll({
               where: {
-                projectId: project.id
+                projectId: project.id,
+                isActive: true
               },
               include: [{ model: User, as: 'user' }]
             }).then(function (projectAssignments) {
