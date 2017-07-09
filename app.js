@@ -13,7 +13,7 @@ var admin = require('./routes/admin');
 var user = require('./routes/user');
 
 
-process.env.amqp_ip = 'amqp://root:root@192.168.56.1';
+process.env.amqp_ip = 'amqp://root:root@192.168.56.200';
 process.env.ex = 'chiepherd.main';
 
 var app = express();
@@ -21,9 +21,9 @@ var app = express();
 const models = require('./models');
 const User = models.users
 
-// models.sequelize.sync({
-//   force: true
-// })
+models.sequelize.sync({
+  force: true
+})
 
 // Configure the local strategy for use by Passport.
 //

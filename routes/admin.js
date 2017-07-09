@@ -27,7 +27,8 @@ router.post('/register', function(req, res) {
       password: req.body.password,
       firstname: req.body.firstname,
       lastname: req.body.lastname,
-      isAdmin: true
+      isAdmin: true,
+      isActive: false
     }).then(function(user) {
       passport.authenticate('local') (req, res, function () {
         res.status(200).send(user.responsify());
