@@ -30,9 +30,7 @@ router.post('/register', function(req, res) {
       isAdmin: true,
       isActive: false
     }).then(function(user) {
-      passport.authenticate('local') (req, res, function () {
-        res.status(200).send(user.responsify());
-      });
+      res.status(200).send(user.responsify());
     }).catch(function(error) {
       res.status(422).send(error);
     });
