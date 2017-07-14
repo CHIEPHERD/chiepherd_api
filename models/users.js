@@ -73,13 +73,17 @@ module.exports = function(sequelize, DataTypes) {
     hooks: {
       beforeCreate: function(user) {
         user.password = passwordHash.generate(user.password);
+        return user;
       },
       afterCreate: function(user) {
+        console.log(1);
+        console.log(user);
         amqp.connect(process.env.amqp_ip, function(err, conn) {
           conn.createChannel(function(err, ch) {
             var ex = 'chiepherd.main';
-            var user = user.isAdmin ? 'admin' : 'user'
-            var key = 'chiepherd.' + user + '.create.reply';
+            console.log(user);
+            var rank = user.isAdmin ? 'admin' : 'user'
+            var key = 'chiepherd.' + rank + '.create.reply';
 
             ch.assertExchange(ex, 'topic');
             ch.publish(ex, key, new Buffer(JSON.stringify(user.responsify())));

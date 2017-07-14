@@ -8,7 +8,7 @@ module.exports = function(connection, done) {
     console.log(err);
     var ex = process.env.ex;
     var queue = 'chiepherd.project.users';
-    
+
     ch.assertExchange(ex, 'topic');
     ch.assertQueue(queue, { exclusive: false }, function(err, q) {
       ch.bindQueue(q.queue, ex, queue)
@@ -26,10 +26,9 @@ module.exports = function(connection, done) {
           if (project != null) {
             ProjectAssignment.findAll({
               where: {
-                projectId: project.id,
-                isActive: true
+                projectId: project.id
               },
-              include: [{ model: User, as: 'user' }]
+              include: [{ model: User, as: 'user', where: { isActive: true } }]
             }).then(function (projectAssignments) {
               for (var i = 0; i < projectAssignments.length; i++) {
                 projectAssignments[i] = projectAssignments[i].responsify();
