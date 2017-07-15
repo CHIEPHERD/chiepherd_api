@@ -7,7 +7,7 @@ module.exports = function(connection, done) {
     console.log(err);
     var ex = process.env.ex;
     var queue = 'chiepherd.user.activate';
-    
+
     ch.assertExchange(ex, 'topic');
     ch.assertQueue(queue, { exclusive: false }, function(err, q) {
       ch.bindQueue(q.queue, ex, queue);
@@ -27,6 +27,10 @@ module.exports = function(connection, done) {
             user.update({
               isActive: json.isActive
             }).then(function(user) {
+              connection.createChannel(function(error, channel) {
+                channel.assertExchange(ex, 'topic');
+                channel.publish(ex, queue + '.reply', new Buffer.from(JSON.stringify(user.responsify())));
+              });
               ch.sendToQueue(msg.properties.replyTo,
                 new Buffer.from(JSON.stringify(user.responsify())),
                 { correlationId: msg.properties.correlationId });
@@ -71,7 +75,7 @@ module.exports = function(connection, done) {
             { correlationId: msg.properties.correlationId });
           ch.ack(msg);
         });
-      }, { noAck: true });
+      }, { noAck: false });
     });
   });
   done();

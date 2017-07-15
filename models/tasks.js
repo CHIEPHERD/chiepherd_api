@@ -1,5 +1,6 @@
 'use strict'
 //sequelize model:create --name Users --attributes first_name:string,last_name:string
+let TaskAssignment = require('./task_assignment');
 
 module.exports = function(sequelize, DataTypes) {
   var Tasks = sequelize.define('tasks', {
@@ -59,16 +60,25 @@ module.exports = function(sequelize, DataTypes) {
     },
     hooks: {
       afterDestroy: function(task) {
-        Tasks.destroy({
-          individualHooks: true,
-          where: {
-            ancestorId: task.id
-          }
-        }).then(function (children) {
-          console.log(children);
-        }).catch(function (err) {
-          console.log(err);
-        })
+        // console.log(TaskAssignment);
+        // TaskAssignment.find({
+        //   where: {
+        //     taskId: task.id
+        //   }
+        // }).then(function (removed) {
+          Tasks.destroy({
+            individualHooks: true,
+            where: {
+              ancestorId: task.id
+            }
+          }).then(function (children) {
+            console.log(children);
+          }).catch(function (err) {
+            console.log(err);
+          });
+        // }).catch(function (err) {
+        //   console.log(err);
+        // });
       }
     }
   });
