@@ -25,11 +25,14 @@ module.exports = function(connection, done) {
         }).then(function(task) {
           console.log(task);
           ch.sendToQueue(msg.properties.replyTo,
-            new Buffer.from(JSON.stringify(task)),
+            new Buffer.from(JSON.stringify({ status: 'removed' })),
             { correlationId: msg.properties.correlationId });
           connection.createChannel(function(error, channel) {
             channel.assertExchange(ex, 'topic');
             channel.publish(ex, queue + '.reply', new Buffer(msg.content.toString()));
+            channel.publish(ex, 'chiepherd.task_assignment.delete', new Buffer(JSON.stringify({
+              taskUuid: task.uuid
+            })));
           });
           ch.ack(msg);
         }).catch(function(error) {

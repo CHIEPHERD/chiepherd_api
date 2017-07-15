@@ -9,7 +9,7 @@ module.exports = function(connection, done) {
     console.log(err);
     var ex = process.env.ex;
     var queue = 'chiepherd.project.tasks';
-    
+
     ch.assertExchange(ex, 'topic');
     ch.assertQueue(queue, { exclusive: false }, function(err, q) {
       ch.bindQueue(q.queue, ex, queue)
@@ -54,6 +54,7 @@ module.exports = function(connection, done) {
                 { correlationId: msg.properties.correlationId });
               ch.ack(msg);
             }).catch(function(error) {
+              console.log(error);
               ch.sendToQueue(msg.properties.replyTo,
                 new Buffer(error.toString()),
                 { correlationId: msg.properties.correlationId });

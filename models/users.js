@@ -76,12 +76,9 @@ module.exports = function(sequelize, DataTypes) {
         return user;
       },
       afterCreate: function(user) {
-        console.log(1);
-        console.log(user);
         amqp.connect(process.env.amqp_ip, function(err, conn) {
           conn.createChannel(function(err, ch) {
             var ex = 'chiepherd.main';
-            console.log(user);
             var rank = user.isAdmin ? 'admin' : 'user'
             var key = 'chiepherd.' + rank + '.create.reply';
 

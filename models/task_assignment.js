@@ -8,7 +8,6 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.BIGINT
     }
   }, {
-    paranoid: true,
     classMethods: {
       associate: function(models) {
         task_assignment.belongsTo(models.users);

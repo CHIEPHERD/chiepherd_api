@@ -114,7 +114,7 @@ module.exports = function(connection, done) {
             { correlationId: msg.properties.correlationId });
           ch.ack(msg);
         });
-      }, { noAck: false });
+      }, { noAck: true });
     });
   });
   done();
