@@ -4,6 +4,73 @@ let Project = models.projects;
 let ProjectAssignment = models.project_assignments;
 let User = models.users;
 
+function jsonizeTask(task) {
+  return {
+    id: task.id,
+    uuid: task.uuid,
+    description: task.description,
+    title: task.title,
+    children: []
+  }
+}
+
+function findTaskFromList(task, list) {
+  for (element of list) {
+    let value = findTask(task, element)
+    if(value) return value
+  }
+
+  return undefined
+}
+
+function findTask(task, element) {
+  for (children of element.children) {
+    let value = findTask(task, children)
+    if(value) { return value }
+  }
+
+  if(task.ancestorId == element.id) { return element }
+}
+
+function tasksToTree(tasks) {
+  let remain = []
+  let result = []
+
+  for (var task of tasks) {
+    if(task.ancestorId == null) { result.push(jsonizeTask(task)) }
+    else {
+      let treeElement = findTaskFromList(task, result)
+
+      if(treeElement) {
+        treeElement.children.push(jsonizeTask(task))
+        for (rem of remain) {
+          let e = findTaskFromList(rem, result)
+          if(e) {
+            e.children.push(jsonizeTask(rem))
+            remain.splice(remain.indexOf(rem), 1)
+          }
+        }
+      } else {
+        remain.push(task)
+      }
+    }
+  }
+
+  while(remain) {
+    let size = remain.length
+    for (rem of remain) {
+      let e = findTaskFromList(rem, result)
+      if(e) {
+        e.children.push(jsonizeTask(rem))
+        remain.splice(remain.indexOf(rem), 1)
+      }
+    }
+    if(size == remain.length) { break }
+  }
+
+  return result
+}
+
 module.exports = function(connection, done) {
   connection.createChannel(function(err, ch) {
     console.log(err);
@@ -37,20 +104,12 @@ module.exports = function(connection, done) {
               },
               include: [{ model: Task, as: 'ancestor' }]
             }).then(function(tasks) {
-              // console.log(tasks);
-              var map = {}, task, roots = [];
-              for (var i = 0; i < tasks.length; i++) {
-                task = tasks[i].simplify();
-                map[task.id] = i;
-                if (task.ancestorId !== null) {
-                  roots[map[task.ancestorId]].children.push(tasks[i].responsify());
-                } else {
-                  roots.push(tasks[i].responsify());
-                }
+              let elements = []
+              for (task of tasks) {
+                elements.push(task)
               }
-              console.log(JSON.stringify(roots));
               ch.sendToQueue(msg.properties.replyTo,
-                new Buffer.from(JSON.stringify(roots)),
+                new Buffer.from(JSON.stringify(tasksToTree(elements))),
                 { correlationId: msg.properties.correlationId });
               ch.ack(msg);
             }).catch(function(error) {
