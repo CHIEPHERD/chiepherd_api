@@ -1,6 +1,6 @@
 'use strict'
 //sequelize model:create --name Users --attributes first_name:string,last_name:string
-let TaskAssignment = require('./task_assignment');
+var amqp = require('amqplib/callback_api');
 
 module.exports = function(sequelize, DataTypes) {
   var Tasks = sequelize.define('tasks', {
@@ -60,25 +60,25 @@ module.exports = function(sequelize, DataTypes) {
     },
     hooks: {
       afterDestroy: function(task) {
-        // console.log(TaskAssignment);
-        // TaskAssignment.find({
-        //   where: {
-        //     taskId: task.id
-        //   }
-        // }).then(function (removed) {
-          Tasks.destroy({
-            individualHooks: true,
-            where: {
-              ancestorId: task.id
-            }
-          }).then(function (children) {
-            console.log(children);
-          }).catch(function (err) {
-            console.log(err);
+        amqp.connect(process.env.amqp_ip, function(err, conn) {
+          conn.createChannel(function(err, ch) {
+            var ex = 'chiepherd.main';
+            var key = 'chiepherd.task.delete';
+            ch.assertExchange(ex, 'topic');
+            Tasks.findAll({
+              where: {
+                ancestorId: task.id
+              }
+            }).then(function (children) {
+              for (let child of children) {
+                ch.publish(ex, key, new Buffer(JSON.stringify({ uuid: child.uuid })));
+                console.log(' [%s]: %s', ex, JSON.stringify({ uuid: child.uuid }));
+              }
+            }).catch(function (error) {
+              console.log(error);
+            })
           });
-        // }).catch(function (err) {
-        //   console.log(err);
-        // });
+        });
       }
     }
   });
