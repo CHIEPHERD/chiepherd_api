@@ -20,13 +20,18 @@ router.post('/login', passport.authenticate('local'), function(req, res) {
       }
     });
   }).catch((err) => {
-    res.json(err);
+    res.json({
+      errors: {
+        message: err
+      }
+    });
   })
 
 });
 
 router.get('/logout', function(req, res){
   req.logout();
+  res.status(200)
 });
 
 router.get('/', function(req, res) {
