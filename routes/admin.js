@@ -5,9 +5,24 @@ const User = models.users;
 var router = express.Router();
 
 router.post('/login', passport.authenticate('local'), function(req, res) {
-  res.json({
-    result: 'ok'
-  });
+  User.findById(req.session.passport.user).then((response) => {
+    res.json({
+      session: req.session,
+      sessionID: req.sessionID,
+      admin: {
+        email: response.email,
+        firstname: response.firstname,
+        lastname: response.lastname,
+        nickname: response.nickname,
+        description: response.description,
+        isAdmin: response.isAdmin,
+        isActive: response.isActive
+      }
+    });
+  }).catch((err) => {
+    res.json(err);
+  })
+
 });
 
 router.get('/logout', function(req, res){

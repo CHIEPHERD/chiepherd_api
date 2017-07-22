@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 var Strategy = require('passport-local').Strategy;
 var passwordHash = require('password-hash');
+var expressSession = require('express-session')
 
 var index = require('./routes/index');
 var admin = require('./routes/admin');
@@ -21,9 +22,10 @@ var app = express();
 const models = require('./models');
 const User = models.users
 
-// models.sequelize.sync({
-//  force: true
-// })
+/* models.sequelize.sync({
+  force: true
+}) */
+
 
 // Add headers
 app.use(function (req, res, next) {
@@ -58,7 +60,7 @@ passport.use(new Strategy({
   usernameField: 'email',
   passwordField: 'password',
   passReqToCallback: true,
-  session: false
+  session: true
 }, function(req, email, password, cb) {
   let query = { where: { email: email }}
   query.where.isAdmin = (req.originalUrl == '/admin/login' ? true : false)
@@ -101,6 +103,13 @@ app.set('view engine', 'jade');
 
 // Initialize Passport and restore authentication state, if any, from the
 // session.
+app.use(expressSession({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 10000}
+}))
+
 app.use(passport.initialize());
 app.use(passport.session());
 
