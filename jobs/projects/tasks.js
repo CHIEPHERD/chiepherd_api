@@ -10,6 +10,7 @@ function jsonizeTask(task) {
     uuid: task.uuid,
     description: task.description,
     title: task.title,
+    type: task.type,
     children: []
   }
 }

@@ -84,7 +84,7 @@ module.exports = function(sequelize, DataTypes) {
 
             ch.assertExchange(ex, 'topic');
             ch.publish(ex, key, new Buffer(JSON.stringify(user.responsify())));
-            console.log(' [%s]: %s', ex, JSON.stringify(user.responsify()));
+            console.log(' [%s]: %s', key, JSON.stringify(user.responsify()));
           });
         });
       }

@@ -28,11 +28,10 @@ module.exports = function(connection, done) {
                 uuid: json.ancestorUuid
               }
             }).then(function (ancestor) {
-              console.log(ancestor.responsify());
               console.log(json.ancestorUuid);
               if (ancestor != undefined || json.ancestorUuid == undefined || json.ancestorUuid == null) {
                 task.update({
-                  title: json.name || task.title,
+                  title: json.title || task.title,
                   description: json.description || task.description,
                   type: json.type || task.type,
                   ancestorId: (ancestor && ancestor.id) || task.ancestorId
@@ -47,6 +46,7 @@ module.exports = function(connection, done) {
                   });
                   ch.ack(msg);
                 }).catch(function(error) {
+                  console.log(error);
                   ch.sendToQueue(msg.properties.replyTo,
                     new Buffer(error.toString()),
                     { correlationId: msg.properties.correlationId });
@@ -59,6 +59,7 @@ module.exports = function(connection, done) {
                 ch.ack(msg);
               }
             }).catch(function (error) {
+              console.log(error);
               ch.sendToQueue(msg.properties.replyTo,
                 new Buffer(error.toString()),
                 { correlationId: msg.properties.correlationId });
@@ -71,6 +72,7 @@ module.exports = function(connection, done) {
             ch.ack(msg);
           }
         }).catch(function(error) {
+          console.log(error);
           ch.sendToQueue(msg.properties.replyTo,
             new Buffer(error.toString()),
             { correlationId: msg.properties.correlationId });
