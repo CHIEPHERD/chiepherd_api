@@ -1,5 +1,7 @@
 var express = require('express');
 var passport = require('passport')
+var amqp = require('amqplib/callback_api')
+
 const models = require('../models');
 const User = models.users;
 var router = express.Router();
@@ -29,9 +31,34 @@ router.post('/login', passport.authenticate('local'), function(req, res) {
 
 });
 
+router.post('/channel', function(req, res) {
+  amqp.connect(process.env.amqp_ip, function(err, conn) {
+    conn.createChannel(function(err, ch) {
+      var ex = 'chiepherd.main';
+      //var args = process.argv.slice(2);
+      var key = req.body.routing_key;
+      var rKey = key + '.web';
+      var msg = req.body.payload;
+
+      ch.assertExchange(ex, 'topic', {durable: true});
+      ch.assertQueue(rKey, {durable: false})
+      ch.publish(ex, key, Buffer.from(JSON.stringify(msg)), {correlationId: 'jqdksljl', replyTo: rKey} );
+      console.log(" [x] Sent %s:'%s'", key, msg);
+      ch.consume(rKey, function(rMsg) {
+        console.log("response message")
+        console.log(rMsg);
+        res.status(200).send(rMsg.content.toString());
+        ch.deleteQueue(rKey)
+        conn.close();
+      })
+    });
+    //setTimeout(function() { conn.close(); process.exit(0) }, 500);
+  });
+})
+
 router.get('/logout', function(req, res){
   req.logout();
-  res.status(200)
+  res.status(200);
 });
 
 router.get('/', function(req, res) {
@@ -47,6 +74,7 @@ router.post('/register', function(req, res) {
       password: req.body.password,
       firstname: req.body.firstname,
       lastname: req.body.lastname,
+      nickname: req.body.nickname,
       isAdmin: true,
       isActive: false
     }).then(function(user) {
