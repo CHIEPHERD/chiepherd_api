@@ -32,6 +32,7 @@ module.exports = function(sequelize, DataTypes) {
         result.name = this.name;
         result.label = this.label;
         result.description = this.description;
+        result.visibility = this.visibility;
         return result;
       }
     },
