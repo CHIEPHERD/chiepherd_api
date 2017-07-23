@@ -47,7 +47,8 @@ module.exports = function(connection, done) {
             ch.sendToQueue(msg.properties.replyTo,
               new Buffer("Unknown project."),
               { correlationId: msg.properties.correlationId });
-            ch.ack(msg);          }
+            ch.ack(msg);
+          }
         }).catch(function (error) {
           ch.sendToQueue(msg.properties.replyTo,
             new Buffer(error.toString()),
