@@ -23,11 +23,19 @@ module.exports = function(connection, done) {
           },
           include: [{ model: Task, as: 'ancestor' }]
         }).then(function(task) {
-          ch.sendToQueue(msg.properties.replyTo,
-            new Buffer.from(JSON.stringify(task.responsify())),
-            { correlationId: msg.properties.correlationId });
-          ch.ack(msg);
+          if (task != null) {
+            ch.sendToQueue(msg.properties.replyTo,
+              new Buffer.from(JSON.stringify(task.responsify())),
+              { correlationId: msg.properties.correlationId });
+            ch.ack(msg);
+          } else {
+            ch.sendToQueue(msg.properties.replyTo,
+              new Buffer(JSON.stringify({ error: 'Unknown task'})),
+              { correlationId: msg.properties.correlationId });
+            ch.ack(msg);
+          }
         }).catch(function(error) {
+          console.log(error);
           ch.sendToQueue(msg.properties.replyTo,
             new Buffer(error.toString()),
             { correlationId: msg.properties.correlationId });

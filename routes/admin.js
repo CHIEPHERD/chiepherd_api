@@ -1,6 +1,6 @@
 var express = require('express');
 var passport = require('passport')
-var amqp = require('amqplib')
+var amqp = require('amqplib/callback_api')
 
 const models = require('../models');
 const User = models.users;
@@ -33,30 +33,28 @@ router.post('/login', passport.authenticate('local'), function(req, res) {
 });
 
 router.post('/channel', function(req, res) {
-  let connec;
-  amqp.connect(process.env.amqp_ip).then(function(conn) {
-    connec = conn;
-    return conn.createChannel()
-  }).then((ch) => {
-    var ex = 'chiepherd.main';
-    //var args = process.argv.slice(2);
-    var key = req.body.routing_key;
-    var rKey = key + '.web';
-    var msg = req.body.payload;
+  var ex = process.env.ex;
 
-    ch.assertExchange(ex, 'topic', {durable: true});
-    ch.assertQueue(rKey, {durable: false})
-    ch.publish(ex, key, Buffer.from(JSON.stringify(msg)), {correlationId: 'jqdksljl', replyTo: rKey} );
-    console.log(" [x] Sent %s:'%s'", key, msg);
-    ch.consume(rKey, (rMsg) => {
-      console.log("response message");
-      ch.ack(rMsg);
-      res.status(200).send(rMsg.content.toString());
-      res.end();
-      connec.close();
-    },{ noAck: false }).catch(function ( err ) { res.sendStatus(402); res.end();});
-  }).catch(function ( err ) { res.status(404).send('connection error'); res.end();});
-    //setTimeout(function() { conn.close(); }, 500);
+  amqp.connect(process.env.amqp_ip, function(err, conn) {
+    conn.createChannel(function(err, ch) {
+      ch.assertQueue(req.body.routing_key, { exclusive: false }, function(err, q) {
+
+        var corr = Math.random().toString() + Math.random().toString() + Math.random().toString();
+
+        ch.consume(q.queue, function(msg) {
+          if (msg.properties.correlationId == corr) {
+            console.log('queue ' + req.body.routing_key);
+            console.log(' [.] Got %s', msg.content.toString());
+            setTimeout(function() { conn.close(); res.status(200).send(msg.content.toString()); });
+          }
+        }, {noAck: true});
+
+        ch.sendToQueue(req.body.routing_key,
+        new Buffer(JSON.stringify(req.body.payload)),
+        { correlationId: corr, replyTo: q.queue });
+      });
+    });
+  });
 })
 
 router.get('/logout', function(req, res){
